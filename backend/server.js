@@ -7,7 +7,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "http://localhost:3000", // Replace with your frontend URL in production
+  origin: "https://donezo-vert.vercel.app",
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
 };
