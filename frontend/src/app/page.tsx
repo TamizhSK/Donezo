@@ -413,8 +413,9 @@ export default function TodoApp() {
                 </Card>
             </Tabs>
           </CardContent>
+          <div className="fixed bottom-0 left-0 w-full flex justify-center items-center p-4 text-stone-500 text-sm shadow-sm"><p>&copy; Crafted By <span className="text-stone-50">Tamizh SK</span></p></div>
         </Card>
-       <div className="fixed bottom-0 left-0 w-full flex justify-center items-center p-4 text-stone-500 text-sm shadow-sm"><p>&copy; Crafted By <span className="text-stone-50">Tamizh SK</span></p></div>
+       
       </div>
 
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
