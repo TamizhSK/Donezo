@@ -414,6 +414,7 @@ export default function TodoApp() {
             </Tabs>
           </CardContent>
         </Card>
+       <div className="fixed bottom-0 left-0 w-full flex justify-center items-center p-4 text-stone-500 text-sm shadow-sm"><p>&copy; Crafted By <span className="text-stone-50">Tamizh SK</span></p></div>
       </div>
 
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
@@ -457,6 +458,7 @@ export default function TodoApp() {
                   </SelectContent>
                 </Select>
               </div>
+              
             </div>
 
             <DialogFooter className="flex-col sm:flex-row gap-2 sm:gap-0">
@@ -469,7 +471,7 @@ export default function TodoApp() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <div className="text-lg font-normal text-stone-300"><p>Crafted By Tamizh SK</p></div>
+      
       </div>
   );
 }
