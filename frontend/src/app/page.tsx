@@ -29,7 +29,6 @@ const categories = [
   { value: "health", label: "Health", color: "bg-rose-500" },
 ];
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export default function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -67,7 +66,7 @@ export default function TodoApp() {
 
   const fetchTodos = async () => {
     try {
-      const res = await fetch(`${API_URL}/api/todos`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/todos`);
       if (!res.ok) throw new Error("Failed to fetch todos");
       
       const data = await res.json();
@@ -88,7 +87,7 @@ export default function TodoApp() {
     if (!task.trim()) return;
     
     try {
-      const res = await fetch(`${API_URL}/api/todos`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/todos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task, category }),
@@ -107,7 +106,7 @@ export default function TodoApp() {
 
   const handleDelete = async (id: number) => {
     try {
-      const res = await fetch(`${API_URL}/api/todos/${id}`, { 
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/todos/${id}`, { 
         method: "DELETE" 
       });
       
@@ -129,7 +128,7 @@ export default function TodoApp() {
 
   const handleUpdate = async (id: number) => {
     try {
-      const res = await fetch(`${API_URL}/api/todos/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -156,7 +155,7 @@ export default function TodoApp() {
     if (!todo) return;
 
     try {
-      const res = await fetch(`${API_URL}/api/todos/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/todos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
