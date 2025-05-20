@@ -231,7 +231,7 @@ export default function TodoApp() {
   return (
     <div className="min-h-screen bg-background p-6 flex justify-center">
       <div className="w-full max-w-3xl">
-        <div className="w-full justify-items-center font-semibold text-2xl py-3"><p>Donezo✅</p></div>
+        <div className="w-full justify-items-center text-center font-semibold text-2xl py-3"><p>Donezo✅</p></div>
         <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-2xl font-bold">Todo List</CardTitle>
