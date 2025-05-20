@@ -469,6 +469,7 @@ export default function TodoApp() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+        <div className="text-lg font-normal text-stone-300"><p>Crafted By Tamizh SK</p></div>
       </div>
   );
 }
