@@ -5,24 +5,24 @@ require("dotenv").config();
 
 const app = express();
 
+// CORS configuration
 const corsOptions = {
-  origin: "http://localhost:3000", // Replace with your React app's URL
+  origin: "http://localhost:3000", // Replace with your frontend URL in production
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-
-app.use(cors());
 app.use(express.json());
 
+// MySQL connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "Sewy1324@#",
-  database: "todo_db",
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
+  port: process.env.MYSQL_PORT || 5000,
 });
-
 
 db.connect((err) => {
   if (err) {
@@ -31,26 +31,18 @@ db.connect((err) => {
   }
   console.log("Connected to MySQL");
 
-  db.query("CREATE DATABASE IF NOT EXISTS todo_db", (err) => {
+  const tableSql = `
+    CREATE TABLE IF NOT EXISTS todos (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      task VARCHAR(255) NOT NULL,
+      category VARCHAR(50) NOT NULL,
+      completed BOOLEAN DEFAULT FALSE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `;
+  db.query(tableSql, (err) => {
     if (err) throw err;
-
-    db.query("USE todo_db", (err) => {
-      if (err) throw err;
-
-      const tableSql = `
-        CREATE TABLE IF NOT EXISTS todos (
-          id INT AUTO_INCREMENT PRIMARY KEY,
-          task VARCHAR(255) NOT NULL,
-          category VARCHAR(50) NOT NULL,
-          completed BOOLEAN DEFAULT FALSE,
-          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-      `;
-      db.query(tableSql, (err) => {
-        if (err) throw err;
-        console.log("Todos table ready");
-      });
-    });
+    console.log("Todos table ready");
   });
 });
 

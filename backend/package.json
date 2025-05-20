@@ -1,16 +1,18 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Todo backend with MySQL and Express",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["express", "mysql", "api", "backend"],
+  "author": "TamizhSK",
+  "license": "MIT",
   "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
