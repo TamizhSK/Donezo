@@ -7,7 +7,7 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-  origin: "https://donezo-vert.vercel.app",
+  origin: "https://donezo-vert.vercel.app/",
   methods: "GET,POST,PUT,DELETE",
   credentials: true,
 };
