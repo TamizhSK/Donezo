@@ -1,11 +1,14 @@
-const express = require("express");
-const mysql = require("mysql2");
-const cors = require("cors");
-require("dotenv").config();
 
+import express from "express";
+import pkg from "pg";
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
+const { Pool } = pkg;
 const app = express();
 
-// CORS configuration
+
 const corsOptions = {
   origin: ["http://localhost:3000", "https://donezo-vert.vercel.app"],
   methods: "GET,POST,PUT,DELETE",
@@ -15,83 +18,103 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// MySQL connection
-const db = mysql.createConnection({
-  host: process.env.MYSQL_HOST,
-  user: process.env.MYSQL_USER,
-  password: process.env.MYSQL_PASSWORD,
-  database: process.env.MYSQL_DATABASE,
-  port: process.env.MYSQL_PORT,
+
+const pool = new Pool({
+  host: process.env.PG_HOST,
+  user: process.env.PG_USER,
+  password: process.env.PG_PASSWORD,
+  database: process.env.PG_DATABASE,
+  port: parseInt(process.env.PG_PORT),
+  ssl: { rejectUnauthorized: false },
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error("MySQL connection failed:", err);
-    return;
-  }
-  console.log("Connected to MySQL");
 
-  const tableSql = `
+(async () => {
+  const createTableSql = `
     CREATE TABLE IF NOT EXISTS todos (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      task VARCHAR(255) NOT NULL,
-      category VARCHAR(50) NOT NULL,
+      id BIGINT PRIMARY KEY,
+      task TEXT NOT NULL,
+      category TEXT NOT NULL,
       completed BOOLEAN DEFAULT FALSE,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
+      created_at TIMESTAMPTZ DEFAULT now(),
+      updated_at TIMESTAMPTZ DEFAULT now()
+    );
   `;
-  db.query(tableSql, (err) => {
-    if (err) throw err;
-    console.log("Todos table ready");
-  });
+  await pool.query(createTableSql);
+  console.log("Todos table ready");
+})().catch(err => {
+  console.error("Error creating todos table:", err);
 });
 
-// Get all todos
-app.get("/api/todos", (req, res) => {
-  db.query("SELECT * FROM todos ORDER BY created_at DESC", (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
+
+app.get("/api/todos", async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM todos ORDER BY created_at DESC"
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Add a new todo
-app.post("/api/todos", (req, res) => {
+
+app.post("/api/todos", async (req, res) => {
   const { task, category } = req.body;
-  const query = "INSERT INTO todos (task, category) VALUES (?, ?)";
-  db.query(query, [task, category], (err, result) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({
-      id: result.insertId,
-      task,
-      category,
-      completed: false,
-    });
-  });
+  const id = Date.now();
+  try {
+    await pool.query(
+      "INSERT INTO todos (id, task, category) VALUES ($1, $2, $3)",
+      [id, task, category]
+    );
+    res.json({ id, task, category, completed: false });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Update a todo
-app.put("/api/todos/:id", (req, res) => {
+
+app.put("/api/todos/:id", async (req, res) => {
   const { id } = req.params;
   const { task, category, completed } = req.body;
-  const query =
-    "UPDATE todos SET task = ?, category = ?, completed = ? WHERE id = ?";
-  db.query(query, [task, category, completed, id], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json({ id, task, category, completed });
-  });
+  try {
+    const updateSql = `
+      UPDATE todos
+      SET task = $1,
+          category = $2,
+          completed = $3,
+          updated_at = now()
+      WHERE id = $4
+      RETURNING *;
+    `;
+    const { rows } = await pool.query(updateSql, [
+      task,
+      category,
+      completed,
+      id,
+    ]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Todo not found" });
+    }
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Delete a todo
-app.delete("/api/todos/:id", (req, res) => {
+
+app.delete("/api/todos/:id", async (req, res) => {
   const { id } = req.params;
-  db.query("DELETE FROM todos WHERE id = ?", [id], (err) => {
-    if (err) return res.status(500).json({ error: err.message });
+  try {
+    await pool.query("DELETE FROM todos WHERE id = $1", [id]);
     res.json({ message: "Todo deleted" });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// Start server
-const PORT = process.env.PORT || 5000;
+
+const PORT = process.env.PG_PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
