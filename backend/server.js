@@ -156,3 +156,8 @@ process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
 });
+
+const PORT = 10000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
