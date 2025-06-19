@@ -2,5 +2,6 @@ node_modules
 package-lock.json
 .frontend/node_modules
 .frontend/package-lock.json
+.frontend/.next
 .backend/node_modules
 .backend/package-lock.json
