@@ -1,2 +1,2 @@
 Configuration updated
-Version: 700
+Version: 407
