@@ -1,2 +1,1 @@
-Configuration updated
-Version: 801
+Release notes for version 1.7.4
