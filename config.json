@@ -1,7 +1,7 @@
 {
-  "metadata": {
-    "build": 456,
-    "timestamp": 1778774610,
-    "environment": "production"
+  "config": {
+    "debug": true,
+    "timeout": 3972,
+    "retries": 2
   }
 }
